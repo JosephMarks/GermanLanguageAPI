@@ -14,18 +14,18 @@ router.get('/words', async (req, res) => {
 });
 
 router.post('/words', async (req, res) => {
-    const { word, meaning } = req.body;
-    if (!word || !meaning) {
-        return res.status(400).json({ error: 'Word and meaning are required' });
-    }
+    const { german, english, type, level, article } = req.body;
+    if (!german || !english || !type) {
+        return res.status(400).json({ error: 'german, english, and type are required.' });
+      }
 
-    try {
-        const newWord = await addWord(word, meaning);
+      try {
+        const newWord = await addWord(german, english, type, level, article);
         res.status(201).json(newWord);
-    } catch (error) {
+      } catch (error) {
         console.error(error.message);
         res.status(500).json({ error: error.message });
-    }
+      }
 });
 
 module.exports = router;

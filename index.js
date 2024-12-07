@@ -1,17 +1,12 @@
+require('dotenv').config(); // Load environment variables
 const express = require('express');
+const router = require('./routes/api'); // Your router that has /words routes
+const dbConfig = require('./config/dbConfig');
 const { Pool } = require('pg');
 
+const pool = new Pool(dbConfig);
 const app = express();
-const port = 3000;
-
-// PostgreSQL connection setup
-const pool = new Pool({
-    user: 'your_postgres_user',
-    host: 'localhost',
-    database: 'your_database_name',
-    password: 'your_password',
-    port: 5432,
-});
+const port = process.env.PORT || 3000;
 
 app.use(express.json());
 
@@ -20,10 +15,13 @@ app.get('/', (req, res) => {
     res.send('Hello, API is working!');
 });
 
-// Example route to get data from the database
+// Mount your router that handles /words, etc.
+app.use('/api', router);
+
+// If you want a direct database route (for testing), you could do:
 app.get('/data', async (req, res) => {
     try {
-        const result = await pool.query('SELECT * FROM your_table');
+        const result = await pool.query('SELECT * FROM words');
         res.json(result.rows);
     } catch (error) {
         console.error(error);
